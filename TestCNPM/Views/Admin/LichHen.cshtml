@@ -1,0 +1,213 @@
+﻿@model DoAnPhanMem.Dtos.Result
+@{
+    var lstData = Html.Raw(Json.Encode(Model.data));
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<!-- Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+    }
+
+    .container {
+        margin: 20px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #4CAF50;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .pagination a:hover {
+                background-color: #ddd;
+            }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+</style>
+
+<!-- HTML -->
+
+    <h2>Lịch Hẹn</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã đặt lịch</th>
+                <th>Email</th>
+                <th>Tên khách hàng</th>
+                <th>Ghi chú</th>
+                <th>Id khách hàng</th>
+                <th>Ngày</th>
+                <th>Số điện thoại</th>
+                <th>Thời gian đặt</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            @foreach (var item in Model.data)
+            {
+                <tr>
+                    <td>@item.MADL</td>
+                    <td>@item.EMAIL</td>
+                    <td>@item.TENKH</td>
+                    <td>@item.GHICHU</td>
+                    <td>@item.IDKHACHHANG</td>
+                    <td>@item.NGAY.ToString("yyyy-MM-dd")</td>
+                    <td>@item.SODTKH</td>
+                    <td>@item.THOIGIAN</td>
+                    <td>@(item.TRANGTHAI ? "Đã xác nhận" : "Chờ xác nhận")</td>
+                    <td>
+                        <span onclick="handleActive('@item.MADL')" class="action-link">Chấp nhận</span>
+                        <span><i class="fa-solid fa-trash action-icon" onclick="handleDelete('@item.MADL')"></i></span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            <a href="@Url.Action("LichHen", new { pageIndex = i, pageSize = Model.PageSize })" class="@(i == Model.PageIndex ? "active" : "")">@i</a>
+        }
+    </div>
+
+
+<!-- jQuery Library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Script -->
+<script>
+    // Format date to dd/MM/yyyy
+    function formatDate(jsonDate) {
+        const timestamp = parseInt(jsonDate.replace(/\/Date\((\d+)\)\//, '$1'));
+        const date = new Date(timestamp);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Format timespan to hh:mm
+    function formatTimeSpan(time) {
+        const hour = time.Hours.toString().padStart(2, '0');
+        const minutes = time.Minutes.toString().padStart(2, '0');
+        return `${hour}:${minutes}`;
+    }
+
+    // Ajax request to activate an appointment
+    function handleActive(ma) {
+        $.ajax({
+            url: "/Admin/ActiveLich",
+            type: 'POST',
+            data: { MaDl: ma },
+            success: function (response) {
+                if (response) {
+                    loadData();
+                }
+            },
+            error: function () {
+                alert('Error while activating!');
+            }
+        });
+    }
+
+    // Ajax request to delete an appointment
+    function handleDelete(ma) {
+        $.ajax({
+            url: "/Admin/Delete",
+            type: 'POST',
+            data: { MaDL: ma },
+            success: function (response) {
+                if (response) {
+                    loadData();
+                }
+            },
+            error: function () {
+                alert('Error while deleting!');
+            }
+        });
+    }
+
+    // Load data and render into the table
+    function loadData() {
+        $.ajax({
+            url: "/Admin/getLichHen",
+            type: 'GET',
+            success: function (data) {
+                const tableBody = $('#table-body');
+                tableBody.empty();
+                data.data.forEach(function (item) {
+                    tableBody.append(`
+                        <tr>
+                            <td>${item.MADL}</td>
+                            <td>${item.EMAIL}</td>
+                            <td>${item.TENKH}</td>
+                            <td>${item.GHICHU}</td>
+                            <td>${item.IDKHACHHANG}</td>
+                            <td>${formatDate(item.NGAY)}</td>
+                            <td>${item.SODTKH}</td>
+                            <td>${formatTimeSpan(item.THOIGIAN)}</td>
+                            <td>${item.TRANGTHAI ? "Đã xác nhận" : "Chờ xác nhận"}</td>
+                            <td>
+                                <span onclick="handleActive('${item.MADL}')" class="action-link">Chấp nhận</span>
+                                <span><i class="fa-solid fa-trash action-icon" onclick="handleDelete('${item.MADL}')"></i></span>
+                            </td>
+                        </tr>
+                    `);
+                });
+            },
+            error: function (xhr) {
+                console.error(xhr);
+                alert('Error loading data!');
+            }
+        });
+    }
+</script>

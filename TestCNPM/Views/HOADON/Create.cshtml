@@ -1,0 +1,245 @@
+﻿@model DoAnPhanMem.Dtos.HoaDonVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+
+@{
+    var dropdownDichvu = ViewBag.dropdownDichvu;
+    var dropdownSanPham = ViewBag.dropdownSanPham;
+
+
+}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+
+<style>
+    .form-control {
+        border: 1px solid !important;
+        padding: 10px 10px;
+    }
+
+    .form-horizontal {
+        padding: 20px;
+        border: 1px dashed;
+        border-radius: 10px;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+    }
+
+        .quantity-control input {
+            width: 50px;
+            margin-left: 10px;
+        }
+</style>
+
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="row">
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="control-label">Số điện thoại</label>
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.SODT, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SODT, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IDKHACHHANG, "Khách Hàng", htmlAttributes: new { @class = "control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("IDKHACHHANG", null, htmlAttributes: new { @class = "form-control", id = "IDKHACHHANG", onchange = "getTenKhachHang()" })
+                            @Html.ValidationMessageFor(model => model.IDKHACHHANG, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.IDNHANVIEN, "Nhân Viên", htmlAttributes: new { @class = "control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("IDNHANVIEN", null, htmlAttributes: new { @class = "form-control", id = "IDNHANVIEN", onchange = "getTenNhanVien()" })
+                            @Html.ValidationMessageFor(model => model.IDNHANVIEN, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MAKM, "Khuyến Mãi", htmlAttributes: new { @class = "control-label" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("MAKM", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.MAKM, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="control-label">Dịch vụ</label>
+                        <div class="col-md-10">
+                            @Html.ListBox("MADV", dropdownDichvu as SelectList, new { @class = "form-control select2", multiple = "multiple", id = "selectDichVu" })
+                            @Html.ValidationMessageFor(model => model.MADV, "", new { @class = "text-danger" })
+
+                            <div id="dichVuQuantities" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="control-label">Sản phẩm</label>
+                        <div class="col-md-10">
+                            @Html.ListBox("IDSP", dropdownSanPham as SelectList, new { @class = "form-control select2", multiple = "multiple", id = "selectSanPham" })
+                            @Html.ValidationMessageFor(model => model.IDSP, "", new { @class = "text-danger" })
+
+                            <div id="sanPhamQuantities" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Tạo hóa đơn" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div>
+    <a href="/Admin/HoaDon">Quay lại</a>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bao gồm JavaScript của Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.0/dist/js/select2.min.js"></script>
+
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    $('.select2').select2();
+    const dichVuList = @Html.Raw(Json.Encode(ViewBag.dropdownDichvu));
+    const sanPhamList = @Html.Raw(Json.Encode(ViewBag.dropdownSanPham));
+
+    // Chuyển đổi JSON thành đối tượng JavaScript
+    const dichVuNames = {};
+    dichVuList.forEach(item => {
+        dichVuNames[item.Value] = item.Text;
+    });
+
+    const sanPhamNames = {};
+    sanPhamList.forEach(item => {
+        sanPhamNames[item.Value] = item.Text;
+    });
+
+    function getTenNhanVien() {
+        var id = $("#IDNHANVIEN").val();
+        $.ajax({
+            url: '@Url.Action("GetTenNhanVien", "HOADON")',
+            type: 'GET',
+            dataType: 'json',
+            data: { id: id },
+            success: function (result) {
+                $("#TENNV").val(result);
+            }
+        });
+    }
+
+    function getTenKhachHang() {
+        var id = $("#IDKHACHHANG").val();
+        $.ajax({
+            url: '@Url.Action("GetTenKhachHang", "HOADON")',
+            type: 'GET',
+            dataType: 'json',
+            data: { id: id },
+            success: function (result) {
+                $("#TENKH").val(result);
+            }
+        });
+    }
+
+    $(function () {
+        $(".datepicker").datepicker({
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $(".timepicker").timepicker({
+            timeFormat: 'HH:mm:ss',
+            interval: 15,
+            scrollbar: true
+        });
+
+        // Load TENNV and TENKH initially if IDNHANVIEN and IDKHACHHANG have values
+        if ($("#IDNHANVIEN").val()) {
+            getTenNhanVien();
+        }
+
+        if ($("#IDKHACHHANG").val()) {
+            getTenKhachHang();
+        }
+    });
+
+
+
+    function updateQuantities() {
+        // Xử lý danh sách dịch vụ
+        var selectedDichVu = $("#selectDichVu").val();
+        $("#dichVuQuantities").empty();
+        if (selectedDichVu) {
+            selectedDichVu.forEach(function (value) {
+
+                const name = dichVuNames[value];
+
+                $("#dichVuQuantities").append(`
+                <div class="form-group">
+                    <label for="quantity-${value}">Số lượng cho dịch vụ ${name}</label>
+                    <input type="number" name="Quantities[DichVu][${value}]" class="form-control" id="quantity-${value}" min="1" />
+                </div>
+            `);
+            });
+        }
+
+        // Xử lý danh sách sản phẩm
+        var selectedSanPham = $("#selectSanPham").val();
+        $("#sanPhamQuantities").empty();
+        if (selectedSanPham) {
+            selectedSanPham.forEach(function (value) {
+
+                const name = sanPhamNames[value];
+
+                $("#sanPhamQuantities").append(`
+                <div class="form-group">
+                    <label for="quantity-${value}">Số lượng cho sản phẩm ${name}</label>
+                    <input type="number" name="Quantities[SanPham][${value}]" class="form-control" id="quantity-${value}" min="1" />
+                </div>
+            `);
+            });
+        }
+    }
+
+    // Cập nhật khi có sự thay đổi trong danh sách
+    $("#selectDichVu, #selectSanPham").change(updateQuantities);
+</script>
+

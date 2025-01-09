@@ -1,0 +1,174 @@
+﻿@model DoAnPhanMem.Models.HOADON
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<style>
+    .invoice {
+        font-family: Arial, sans-serif;
+        width: 100%;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+        page-break-inside: avoid;
+    }
+
+    .invoice-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .invoice-meta p {
+        margin: 0;
+        font-size: 12px;
+    }
+
+    .customer-info, .employee-info, .discount-info {
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .items table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .items th, .items td {
+        padding: 5px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    .items th {
+        background-color: #f9f9f9;
+    }
+
+    .total {
+        margin-top: 10px;
+        padding: 5px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        font-size: 12px;
+    }
+
+    .invoice-title {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+</style>
+
+
+<div class="container">
+    <div>
+        <span>
+            <a href="/Admin/HoaDon">Quay lại</a>
+        </span>
+        <div class="text-center mt-4">
+            <button id="exportBtn" class="btn btn-primary">Xuất hóa đơn (PDF)</button>
+        </div>
+    </div>
+    <div class="invoice" id="invoice">
+        <div class="invoice-header">
+            <h2 class="invoice-title">Hóa đơn số: @Model.IDHOADON</h2>
+            <div class="invoice-meta">
+                <p><strong>Ngày:</strong> @Model.NGAY.ToString("yyyy-MM-dd")</p>
+                <p><strong>Giờ:</strong> @Model.GIO.ToString("hh\\:mm")</p>
+            </div>
+        </div>
+        <div class="customer-info">
+            <p><strong>Khách hàng:</strong> @Model.TENKH</p>
+            <p><strong>Điện thoại:</strong> @Model.SODT</p>
+        </div>
+        <div class="employee-info">
+            <p><strong>Nhân viên:</strong> @Model.TENNV</p>
+        </div>
+        <div class="discount-info">
+            <p><strong>Mã KM:</strong> @Model.MAKM</p>
+        </div>
+        <div class="details">
+            <div class="items">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HOADON_SP)
+                        {
+                            <tr>
+                                <td>@item.SANPHAM.TENSP</td>
+                                <td>@item.SOLUONG</td>
+                                <td>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA) VND</td>
+                                <td>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA * item.SOLUONG) VND</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="items">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dịch vụ</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HOADON_DV)
+                        {
+                            <tr>
+                                <td>@item.DICHVU.TENDV</td>
+                                <td>@item.SOLUONG</td>
+                                <td>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA) VND</td>
+                                <td>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA * item.SOLUONG) VND</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total">
+                <p><strong>Tổng cộng:</strong> @String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", Model.TONGGIA) VND</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script>
+        document.getElementById('exportBtn').addEventListener('click', function () {
+            const invoiceElement = document.getElementById('invoice');
+            const options = {
+                margin: [10, 10, 10, 10],
+                filename: 'hoa_don.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(options).from(invoiceElement).save();
+        });
+
+
+        document.querySelectorAll('.product-name').forEach(element => {
+            const words = element.textContent.split(' ');
+            if (words.length > 6) {
+                const formattedText = words.map((word, index) => {
+                    if ((index + 1) % 6 === 0) return word + '\n';
+                    return word;
+                }).join(' ');
+                element.textContent = formattedText;
+            }
+        });
+    </script>

@@ -1,0 +1,17 @@
+﻿@model List<DoAnPhanMem.Models.DICHVU>
+@foreach (var item in Model)
+{
+    <a href="/DICHVU/FindBy?IDDM=@item.IDDM">
+        <div class="col-lg-4 col-md-6 special-grid @item.IDDM">
+            <div class="gallery-single fix">
+                <img src="~/Images/@item.IMG" class="img-fluid" alt="Image" style="height:250px;width:400px">
+                <div class="why-text">
+                    <h4>@item.TENDV</h4>
+                    <p>@item.MOTA</p>
+                    <h5>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA)</h5>
+                </div>
+            </div>
+        </div>
+    </a>
+}
+

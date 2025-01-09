@@ -1,0 +1,75 @@
+﻿@model DoAnPhanMem.Models.SANPHAM_DV
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+    .form-control {
+        border: 1px solid !important;
+    }
+
+    .form-horizontal {
+        padding: 20px;
+        border: 1px dashed;
+        border-radius: 10px;
+    }
+
+    .btn-default {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+        .btn-default:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .text-danger {
+        color: #dc3545;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>SANPHAM_DV</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MADV, "Dịch Vụ", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("MADV", (SelectList)ViewBag.MADV, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MADV, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IDSP, "Sản Phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("IDSP", (SelectList)ViewBag.IDSP, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.IDSP, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

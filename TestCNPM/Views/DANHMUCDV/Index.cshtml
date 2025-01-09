@@ -1,0 +1,95 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.DANHMUCDV>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layoutweb.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-8W1TwW6pG1s4ty33oXt98JGfuJ7U3mBovJ3+OwYszab2NQ8PXu/6l6+/X3b8Qe1VGm5McO0+ELRVE8Zl8uI2jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+    .table {
+        width: 90%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        margin-left: 100px;
+    }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .table td {
+            background-color: #fff;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .action-links a {
+        font-size: 14px;
+        padding: 5px 10px;
+        color: #0b0b0b;
+    }
+
+        .action-links a i {
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .action-links a.btn-danger {
+            color: #0b0b0b;
+        }
+
+    h2.text-center {
+        margin-bottom: 20px;
+    }
+</style>
+
+<h2 class="text-center">Danh mục dịch vụ</h2>
+
+<div class="text-right mb-3">
+    @Html.ActionLink("Tạo danh mục", "Create", null, new { @class = "btn btn-primary" })
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.IDDM)</th>
+            <th>@Html.DisplayNameFor(model => model.TENDM)</th>
+            <th>@Html.DisplayNameFor(model => model.IMG)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.IDDM)</td>
+                <td>@Html.DisplayFor(modelItem => item.TENDM)</td>
+                <td>
+                    <img src="@Url.Content("~/Images/" + item.IMG)" alt="Image" style="max-width: 100px; max-height: 100px;" />
+                </td>
+
+                <td class="action-links">
+                    <a href="@Url.Action("Edit", new { id = item.IDDM.Trim() })" class="btn btn-info btn-sm" title="Edit"><i class="fas fa-edit"></i> Sửa</a>
+                    <a href="@Url.Action("Delete", new { id = item.IDDM.Trim() })" class="btn btn-danger btn-sm" title="Delete"><i class="fas fa-trash-alt"></i> Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

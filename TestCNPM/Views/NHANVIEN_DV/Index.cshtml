@@ -1,0 +1,84 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.NHANVIEN_DV>
+
+@{
+    ViewBag.Title = "Danh sách Nhân viên - Dịch vụ";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<h2>Danh sách Nhân viên - Dịch vụ</h2>
+<style>
+    .table {
+        width: 50%;
+        border-collapse: collapse;
+        margin-left: 100px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .table tbody tr {
+            background-color: #f2f2f2;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #000;
+        }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+</style>
+<p>
+    @Html.ActionLink("Tạo mới", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Mã Nhân Viên
+            </th>
+            <th>
+                Tên Nhân Viên
+            </th>
+            <th>
+                Tên Dịch Vụ
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NHANVIEN.IDNHANVIEN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NHANVIEN.TENNV)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DICHVU.TENDV)
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>

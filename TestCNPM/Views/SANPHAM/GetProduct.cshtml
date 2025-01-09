@@ -1,0 +1,97 @@
+﻿@model List<DoAnPhanMem.Models.SANPHAM>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+<style>
+    .swiper {
+        width: 100%;
+        margin-bottom: 100px;
+    }
+
+    .product-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 200px;
+        text-align: center;
+        height: 400px;
+    }
+
+    .product-image img {
+        width: 80%;
+        height: auto;
+    }
+
+    .product-info {
+        padding: 20px;
+    }
+
+    .product-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .product-description {
+        font-size: 14px;
+        color: #777;
+        margin: 10px 0;
+    }
+
+    .product-price,
+    .product-rating,
+    .product-quantity {
+        font-size: 16px;
+        color: #333;
+        margin: 5px 0;
+    }
+</style>
+
+<h3 class="mb-2 mt-2 font-weight-bold font-italic" style="font-size: 20px;">Danh sách sản phẩm đi kèm</h3>
+
+<div class="swiper">
+    <div class="swiper-wrapper">
+        @foreach (var item in Model)
+        {
+            <div class="swiper-slide">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="~/Images/@item.IMG" alt="@item.TENSP">
+                    </div>
+                    <div class="product-info">
+                        <h2 class="product-title">@item.TENSP</h2>
+                        @*<p class="product-description">@item.MOTA</p>*@
+                        <p class="product-price">Giá:  @String.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:C0}", item.GIA) VND</p>
+                        <p class="product-rating">Đánh giá: @item.TONGDANHGIA</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<script>
+    const swiper = new Swiper('.swiper', {
+        loop: true,
+        slidesPerView: 5,
+        spaceBetween: 10,
+        autoplay: {
+            delay: 3000, // Thời gian giữa các lần chuyển slide (3000ms = 3s)
+            disableOnInteraction: false, // Không tắt autoplay khi tương tác với slide
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        scrollbar: {
+            el: '.swiper-scrollbar',
+            hide: true,
+        },
+    });
+</script>

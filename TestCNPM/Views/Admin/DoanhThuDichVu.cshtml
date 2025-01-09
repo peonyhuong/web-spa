@@ -1,0 +1,108 @@
+﻿@{
+    var doanhThuDichVu = Html.Raw(Json.Encode(ViewBag.doanhThuDichVu));
+    ViewBag.Title = "Doanh Thu Theo Sản Phẩm";
+}
+
+<!-- Styles -->
+<style>
+    #doanhThuDichVu {
+        width: 100%;
+        height: 500px;
+    }
+</style>
+
+<!-- HTML -->
+<div id="doanhThuDichVu"></div>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+<!-- Chart code -->
+<script>
+    // Parse doanhThuDichVu from server
+    var doanhThuDichVu = @doanhThuDichVu;
+
+    am5.ready(function () {
+        // Initialize root element
+        var rootDichVu = am5.Root.new("doanhThuDichVu");
+
+        // Apply themes
+        rootDichVu.setThemes([am5themes_Animated.new(rootDichVu)]);
+
+        // Create chart
+        var chart = rootDichVu.container.children.push(am5xy.XYChart.new(rootDichVu, {
+            panX: true,
+            panY: true,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            pinchZoomX: true,
+            paddingLeft: 0,
+            paddingRight: 10
+        }));
+
+        // Create and configure cursor
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(rootDichVu, {}));
+        cursor.lineY.set("visible", false);
+
+        // Configure X-axis
+        var xRenderer = am5xy.AxisRendererX.new(rootDichVu, { minGridDistance: 30, minorGridEnabled: true });
+        xRenderer.labels.template.setAll({
+            rotation: -90,
+            centerY: am5.p50,
+            centerX: am5.p100,
+            paddingRight: 15
+        });
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(rootDichVu, {
+            categoryField: "country",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(rootDichVu, {})
+        }));
+
+        // Configure Y-axis
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(rootDichVu, {
+            renderer: am5xy.AxisRendererY.new(rootDichVu, { strokeOpacity: 0.1 })
+        }));
+
+        // Create series
+        var series = chart.series.push(am5xy.ColumnSeries.new(rootDichVu, {
+            name: "Doanh Thu",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "value",
+            categoryXField: "country",
+            tooltip: am5.Tooltip.new(rootDichVu, { labelText: "{categoryX}: {valueY}" })
+        }));
+
+        series.columns.template.setAll({
+            cornerRadiusTL: 5,
+            cornerRadiusTR: 5,
+            strokeOpacity: 0
+        });
+
+        // Color adapter for columns
+        series.columns.template.adapters.add("fill", function (fill, target) {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        // Stroke adapter for columns
+        series.columns.template.adapters.add("stroke", function (stroke, target) {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        // Prepare data
+        var data = doanhThuDichVu.map(item => ({
+            country: item.DICHVU,
+            value: item.TONGDOANHTHU
+        }));
+
+        // Set data
+        xAxis.data.setAll(data);
+        series.data.setAll(data);
+
+        // Animate chart
+        series.appear(1000);
+        chart.appear(1000, 100);
+    });
+</script>

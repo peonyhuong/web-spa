@@ -1,0 +1,86 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.SANPHAM_DV>
+
+@{
+    ViewBag.Title = "Danh sách Sản phẩm - Dịch vụ";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<h2>Danh sách Sản phẩm - Dịch vụ</h2>
+<style>
+    .table {
+        width: 80%;
+        border-collapse: collapse;
+        margin-left: 100px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .table tbody tr {
+            background-color: #f2f2f2;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #000;
+        }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+</style>
+<p>
+    @Html.ActionLink("Tạo mới", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Mã Dịch Vụ
+            </th>
+            <th>
+                Tên Dịch Vụ
+            </th>
+            <th>
+                Tên Sản Phẩm
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DICHVU.MADV)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DICHVU.TENDV)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SANPHAM.TENSP)
+                </td>
+                <td>
+                    <!-- Có thể thêm các hành động như sửa hoặc xóa ở đây -->
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

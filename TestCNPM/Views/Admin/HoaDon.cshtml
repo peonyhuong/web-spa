@@ -1,0 +1,250 @@
+﻿@model DoAnPhanMem.Dtos.Result
+@{
+    var lstData = Html.Raw(Json.Encode(Model.data));
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .btn-add {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-add:hover {
+            background-color: #45a049;
+        }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+            color: #333;
+        }
+
+        .table th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #333;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .pagination a:hover {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+    .date-filter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+        .date-filter label {
+            margin-right: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .date-filter input {
+            margin-right: 20px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .date-filter button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .date-filter button:hover {
+                background-color: #45a049;
+            }
+
+    .table-actions a {
+        margin: 0 5px;
+        text-decoration: none;
+        padding: 5px 10px;
+        background-color: #f1c40f;
+        color: white;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+        .table-actions a:hover {
+            background-color: #e1b400;
+        }
+
+    .table-actions .delete {
+        background-color: #e74c3c;
+    }
+
+        .table-actions .delete:hover {
+            background-color: #c0392b;
+        }
+</style>
+
+
+<h2>Quản Lý Hóa Đơn</h2>
+
+<a href="/HOADON/Create" class="btn-add">Thêm Mới</a>
+
+
+<div class="date-filter">
+    <label for="fromDate">Từ ngày:</label>
+    <input type="date" id="fromDate">
+
+    <label for="toDate">Đến ngày:</label>
+    <input type="date" id="toDate">
+
+    <button onclick="filterByDate()">Tìm kiếm</button>
+</div>
+<div class="date-filter">
+    <label for="searchInput">Tìm kiếm:</label>
+    <input type="text" id="searchInput" placeholder="Tìm kiếm tên khách hàng hoặc tên nhân viên">
+    <button onclick="searchData()">Tìm kiếm</button>
+</div>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Hóa Đơn</th>
+            <th>Số ĐT</th>
+            <th>Tên Khách Hàng</th>
+            <th>Tên Nhân Viên</th>
+            <th>Mã Khuyến Mãi</th>
+            <th>Số Lượng</th>
+            <th>Tổng Giá</th>
+            <th>Ngày</th>
+            <th>Giờ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+        @foreach (var item in Model.data)
+        {
+            <tr>
+                <td>@item.IDHOADON</td>
+                <td>@item.SODT</td>
+                <td>@item.TENKH</td>
+                <td>@item.TENNV</td>
+                <td>@item.MAKM</td>
+                <td>@item.SOLUONG</td>
+                <td>@item.TONGGIA</td>
+                <td>@item.NGAY.ToString("dd/MM/yyyy")</td>
+                <td>@item.GIO</td>
+                <td class="table-actions">
+                    <a href="/HOADON/GetByMa?IDHD=@item.IDHOADON">Chi tiết</a>
+                    <a href="/HOADON/Edit?IDHOADON=@item.IDHOADON">Sửa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @for (int i = 1; i <= Model.totalPages; i++)
+    {
+        <a href="@Url.Action("HoaDon", new { pageIndex = i, pageSize = Model.PageSize })" class="@(i == Model.PageIndex ? "active" : "")">@i</a>
+    }
+</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+<script>
+    function filterByDate() {
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
+
+        if (fromDate && toDate) {
+            window.location.href = `/Admin/HoaDon?fromDate=${fromDate}&toDate=${toDate}`;
+        } else {
+            alert("Vui lòng chọn cả hai ngày!");
+        }
+    }
+</script>
+
+
+<script>
+    function searchData() {
+        var searchValue = $('#searchInput').val();
+
+        if (searchValue) {
+            window.location.href = `/Admin/HoaDon?searchTerm=${searchValue}`;
+        } else {
+            alert("Vui lòng nhập thông tin tìm kiếm!");
+        }
+    }
+
+</script>

@@ -1,0 +1,72 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.DICHVU>
+
+@{
+    ViewBag.Title = "Danh sách dịch vụ";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<h2 class="text-center mt-4">Danh sách dịch vụ</h2>
+
+<style>
+    .table img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="mb-3">
+        @Html.ActionLink("Tạo mới dịch vụ", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã dịch vụ</th>
+                <th>Tên dịch vụ</th>
+                <th>Mô tả</th>
+                <th>Hình ảnh 1</th>
+                <th>Hình ảnh 2</th>
+                <th>Hình ảnh 3</th>
+                <th>Giá</th>
+                <th>Tổng đánh giá</th>
+                <th>Đơn vị tính</th>
+                <th>Giảm giá</th>
+                <th>Danh mục dịch vụ</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.MADV)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TENDV)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MOTA)</td>
+                    <td><img src="@Url.Content("~/Images/" + item.IMG)" alt="Hình ảnh 1" /></td>
+                    <td><img src="@Url.Content("~/Images/" + item.IMG2)" alt="Hình ảnh 2" /></td>
+                    <td><img src="@Url.Content("~/Images/" + item.IMG3)" alt="Hình ảnh 3" /></td>
+                    <td>@Html.DisplayFor(modelItem => item.GIA)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TONGDANHGIA)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DONVITINH)</td>
+                    <td>@Html.DisplayFor(modelItem => item.GIAMGIA)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DANHMUCDV.TENDM)</td>
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.MADV.Trim() })" class="btn btn-warning btn-sm">Sửa</a>
+                        <a href="@Url.Action("Delete", new { id = item.MADV.Trim() })" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

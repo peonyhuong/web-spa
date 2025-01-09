@@ -1,0 +1,20 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+<div class="container">
+    <div class="row">
+        @Html.Action("SastiffyAll", "Admin")
+    </div>
+    <div class="col-xl-6">
+        @Html.Action("SastiffyDoanhThu", "Admin")
+        <h5 class="text-center">Thống kê doanh thu theo tháng</h5>
+    </div>
+    <div class="col-xl-6">
+        @Html.Action("DoanhThuSanPham", "Admin")
+        <h5 class="text-center">Thống kê doanh thu theo sản phẩm</h5>
+    </div>
+    <div class="col-xl-6">
+        @Html.Action("DoanhThuDichVu", "Admin")
+        <h5 class="text-center">Thống kê doanh thu theo dịch vụ</h5>
+    </div>
+</div>

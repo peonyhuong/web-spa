@@ -1,0 +1,126 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.KHUYENMAI>
+
+@{
+    ViewBag.Title = "Danh sách Khuyến Mãi";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<h2>Danh sách Khuyến Mãi</h2>
+<style>
+    .table {
+        width: 80%;
+        border-collapse: collapse;
+        margin-left: 100px;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .table tbody tr {
+            background-color: #f2f2f2;
+        }
+</style>
+
+<p>
+    @Html.ActionLink("Tạo mới", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã Khuyến Mãi</th>
+            <th>Tên Chương Trình Khuyến Mãi</th>
+            <th>Giảm Giá</th>
+            <th>Thời Gian Bắt Đầu</th>
+            <th>Thời Gian Kết Thúc</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.MAKM)</td>
+                <td>@Html.DisplayFor(modelItem => item.TENCTKM)</td>
+                <td>@Html.DisplayFor(modelItem => item.GIAMGIA)</td>
+                <td>@Html.DisplayFor(modelItem => item.THOIGIANBD)</td>
+                <td>@Html.DisplayFor(modelItem => item.THOIGIANKT)</td>
+                <td>
+                    @Html.ActionLink("Sửa", "Edit", new { id = item.MAKM.Trim() }, new { @class = "btn btn-warning" }) |
+                    <button class="btn btn-danger" onclick="showDeleteModal('@item.MAKM')">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal Xóa -->
+@using (Html.BeginForm("DeleteConfirmed", "KHUYENMAI", FormMethod.Post, new { id = "deleteForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Xóa Khuyến Mãi</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa khuyến mãi này không?
+                    <input type="hidden" id="deleteId" name="id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function showDeleteModal(id) {
+            $('#deleteId').val(id);
+            $('#deleteForm').attr('action', '@Url.Action("DeleteConfirmed", "KHUYENMAI")');
+            $('#deleteModal').modal('show');
+        }
+
+        $('#deleteForm').submit(function (event) {
+            event.preventDefault(); // Ngăn không cho form gửi theo cách thông thường
+
+            var form = $(this);
+            var id = $('#deleteId').val();
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(), // Sử dụng serialize để bao gồm tất cả dữ liệu form
+                success: function (result) {
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload(); // Tải lại trang để cập nhật danh sách
+                    } else {
+                        alert(result.message);
+                    }
+                    $('#deleteModal').modal('hide');
+                },
+                error: function () {
+                    alert('Đã xảy ra lỗi khi xóa.');
+                    $('#deleteModal').modal('hide');
+                }
+            });
+        });
+    </script>
+}

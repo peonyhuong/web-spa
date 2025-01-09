@@ -1,0 +1,273 @@
+﻿@model DoAnPhanMem.Dtos.Result
+@{
+    var lstData = Html.Raw(Json.Encode(Model.data));
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+            color: #333;
+        }
+
+        .table th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #333;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .pagination a:hover {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .pagination a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+    .date-filter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+        .date-filter label {
+            margin-right: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .date-filter input {
+            margin-right: 20px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .date-filter button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .date-filter button:hover {
+                background-color: #45a049;
+            }
+</style>
+
+<div class="container">
+    <h2>Lịch Sử Đặt Lịch</h2>
+
+    <!-- Bộ lọc ngày -->
+    <div class="date-filter">
+        <label for="fromDate">Từ ngày:</label>
+        <input type="date" id="fromDate">
+
+        <label for="toDate">Đến ngày:</label>
+        <input type="date" id="toDate">
+
+        <button onclick="filterByDate()">Tìm kiếm</button>
+    </div>
+
+    <!-- Thanh tìm kiếm -->
+    <div class="date-filter">
+        <label for="searchCustomer">Tìm kiếm khách hàng:</label>
+        <input type="text" id="searchCustomer" placeholder="Nhập tên hoặc email khách hàng">
+        <button onclick="searchCustomer()">Tìm kiếm</button>
+    </div>
+
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã đặt lịch</th>
+                <th>Email</th>
+                <th>Tên khách hàng</th>
+                <th>Ghi chú</th>
+                <th>Id khách hàng</th>
+                <th>Ngày</th>
+                <th>Số điện thoại</th>
+                <th>Thời gian đặt</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            @foreach (var item in Model.data)
+            {
+                <tr>
+                    <td>@item.MADL</td>
+                    <td>@item.EMAIL</td>
+                    <td>@item.TENKH</td>
+                    <td>@item.GHICHU</td>
+                    <td>@item.IDKHACHHANG</td>
+                    <td>@item.NGAY.ToString("yyyy-MM-dd")</td>
+                    <td>@item.SODTKH</td>
+                    <td>@item.THOIGIAN</td>
+                    <td>@(item.TRANGTHAI ? "Đã xác nhận" : "Chờ xác nhận")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            <a href="@Url.Action("LichSu", new { pageIndex = i, pageSize = Model.PageSize })" class="@(i == Model.PageIndex ? "active" : "")">@i</a>
+        }
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function filterByDate() {
+        var fromDate = $('#fromDate').val();
+        var toDate = $('#toDate').val();
+
+        if (fromDate && toDate) {
+            window.location.href = `/Admin/LichSu?fromDate=${fromDate}&toDate=${toDate}`;
+        } else {
+            alert("Vui lòng chọn cả hai ngày!");
+        }
+    }
+    function searchCustomer1() {
+        var searchTerm = $('#searchCustomer1').val();
+
+        if (searchTerm.trim() === "") {
+            alert("Vui lòng nhập tên hoặc email khách hàng để tìm kiếm!");
+            return;
+        }
+
+        $.ajax({
+            url: '/Admin/LichSu',
+            type: 'GET',
+            data: {
+                searchTerm: searchTerm,
+                pageIndex: 1,
+                pageSize: 10
+            },
+            success: function (response) {
+
+                var tableBody = $('#table-body');
+                tableBody.empty();
+
+
+                response.data.forEach(function (item) {
+                    var row = `<tr>
+                    <td>${item.MADL}</td>
+                    <td>${item.EMAIL}</td>
+                    <td>${item.TENKH}</td>
+                    <td>${item.GHICHU}</td>
+                    <td>${item.IDKHACHHANG}</td>
+                    <td>${item.NGAY}</td>
+                    <td>${item.SODTKH}</td>
+                    <td>${item.THOIGIAN}</td>
+                    <td>${item.TRANGTHAI ? "Đã xác nhận" : "Chờ xác nhận"}</td>
+                </tr>`;
+                    tableBody.append(row);
+                });
+            },
+            error: function () {
+                alert("Đã xảy ra lỗi khi tìm kiếm.");
+            }
+        });
+    }
+
+    function searchCustomer() {
+        var searchTerm = $('#searchCustomer').val();
+
+
+        $.ajax({
+            url: '/Admin/LichSu',
+            type: 'GET',
+            data: {
+                searchTerm: searchTerm,
+                pageIndex: 1,
+                pageSize: @Model.PageSize
+            },
+            success: function(response) {
+
+                var tableBody = $('#table-body');
+                tableBody.empty();
+
+
+                response.data.forEach(function(item) {
+                    var row = `<tr>
+                        <td>${item.MADL}</td>
+                        <td>${item.EMAIL}</td>
+                        <td>${item.TENKH}</td>
+                        <td>${item.GHICHU}</td>
+                        <td>${item.IDKHACHHANG}</td>
+                        <td>${item.NGAY}</td>
+                        <td>${item.SODTKH}</td>
+                        <td>${item.THOIGIAN}</td>
+                        <td>${item.TRANGTHAI ? "Đã xác nhận" : "Chờ xác nhận"}</td>
+                    </tr>`;
+                    tableBody.append(row);
+                });
+            },
+            error: function() {
+                alert("Đã xảy ra lỗi khi tìm kiếm.");
+            }
+        });
+    }
+</script>

@@ -1,0 +1,131 @@
+﻿@model IEnumerable<DoAnPhanMem.Models.SANPHAM>
+
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<h2>Sản phẩm</h2>
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .table tbody tr {
+            background-color: #f2f2f2;
+        }
+
+    .btn {
+        margin-right: 5px;
+    }
+</style>
+<p>
+    @Html.ActionLink("Tạo mới", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IDSP)
+            </th>
+            <th>
+                Tên sản phẩm
+            </th>
+            <th>
+                Mô tả
+            </th>
+            <th>
+                Hình ảnh 1
+            </th>
+            <th>
+                Hình ảnh 2
+            </th>
+            <th>
+                Hình ảnh 3
+            </th>
+            <th>
+                Giá
+            </th>
+            <th>
+                Tổng đánh giá
+            </th>
+            <th>
+                Thuế
+            </th>
+            <th>
+                Giảm giá
+            </th>
+            <th>
+                Đơn vị tính
+            </th>
+            <th>
+                Danh mục
+            </th>
+            <th>
+                Số lượng
+            </th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IDSP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TENSP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MOTA)
+                </td>
+                <td>
+                    <img src="@Url.Content("~/Images/" + item.IMG)" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                </td>
+                <td>
+                    <img src="@Url.Content("~/Images/" + item.IMG2)" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                </td>
+                <td>
+                    <img src="@Url.Content("~/Images/" + item.IMG3)" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GIA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TONGDANHGIA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.THUE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GIAMGIA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DONVITINH)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DANHMUCSP.TENDM)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SOLUONG)
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = item.IDSP.Trim() })" class="btn btn-warning btn-sm">Sửa</a> |
+                    <a href="@Url.Action("Delete", new { id = item.IDSP.Trim() })" class="btn btn-danger btn-sm">Xóa</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

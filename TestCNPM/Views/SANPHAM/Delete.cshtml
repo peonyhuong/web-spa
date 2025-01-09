@@ -1,0 +1,90 @@
+﻿@model DoAnPhanMem.Models.SANPHAM
+
+@{
+    ViewBag.Title = "Xóa Sản Phẩm";
+    Layout = "~/Views/Shared/_LayoutAdmi.cshtml";
+}
+
+<h2>Xóa Sản Phẩm</h2>
+
+<h3>Bạn có chắc chắn muốn xóa sản phẩm này không?</h3>
+<div class="delete-container">
+    <h4>Thông Tin Sản Phẩm</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Tên Sản Phẩm</dt>
+                <dd>@Html.DisplayFor(model => model.TENSP)</dd>
+
+                <dt>Mô Tả</dt>
+                <dd>@Html.DisplayFor(model => model.MOTA)</dd>
+
+                <dt>Hình Ảnh 1</dt>
+                <dd>@Html.DisplayFor(model => model.IMG)</dd>
+
+                <dt>Hình Ảnh 2</dt>
+                <dd>@Html.DisplayFor(model => model.IMG2)</dd>
+
+                <dt>Hình Ảnh 3</dt>
+                <dd>@Html.DisplayFor(model => model.IMG3)</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Giá</dt>
+                <dd>@Html.DisplayFor(model => model.GIA)</dd>
+
+                <dt>Tổng Đánh Giá</dt>
+                <dd>@Html.DisplayFor(model => model.TONGDANHGIA)</dd>
+
+                <dt>Thuế</dt>
+                <dd>@Html.DisplayFor(model => model.THUE)</dd>
+
+                <dt>Giảm Giá</dt>
+                <dd>@Html.DisplayFor(model => model.GIAMGIA)</dd>
+
+                <dt>Đơn Vị Tính</dt>
+                <dd>@Html.DisplayFor(model => model.DONVITINH)</dd>
+
+                <dt>Số Lượng</dt>
+                <dd>@Html.DisplayFor(model => model.SOLUONG)</dd>
+
+                <dt>Danh Mục Sản Phẩm</dt>
+                <dd>@Html.DisplayFor(model => model.DANHMUCSP.TENDM)</dd>
+            </dl>
+        </div>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color text-right">
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+            @Html.ActionLink("Quay Lại Danh Sách", "Index", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>
+
+<style>
+    .delete-container {
+        margin: 20px;
+    }
+
+    .dl-horizontal dt {
+        width: 150px;
+        float: left;
+        clear: left;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .dl-horizontal dd {
+        margin-left: 170px;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+    }
+</style>
